@@ -1,0 +1,38 @@
+---Created calculated column for income group
+
+IncomeGroup = SWITCH
+TRUE(),
+'public cust_detail'(income] < 35000, "Low"
+'public cust_detail'[income] >= 35000 && 'public cust_detail'[income] <70000, "Med",
+'public cust_detail'[income] >= 70000, "High",
+"unknown"
+)
+
+---Created calculated column for age group 
+
+AgeGroup = SWITCH
+'public cust_detail'Icustomer_age] < 30, "20-30",
+'public cust_detail [customer_age] >= 30 && 'public cust_detail'[customer_age] < 40, "30-40",
+'public cust_detail"customer_age] >= 40 && 'public cust_detail'[customer_age] < 50, "40-50"
+'public cust_detail"[customer_age] >= 50 && 'public cust_detail'[customer_age] < 60, "50-60"
+'public cust_detail'[customer_age] >= 60, "60+",
+"unknown"
+)
+
+---created measures
+
+weekNum_2 = WEEKNUM(cc_detail[Week_Start_Date])
+
+revenue = cc_detail[Annual_Fees] + cc_detail[Total_Trans_Amt] +  cc_detail[Interest_Earned]
+
+current_week_revenue = CALCULATE(
+    sum(cc_detail[revenue]),
+    FILTER(
+        all(cc_detail),
+        cc_detail[weekNum_2] = MAX(cc_detail[weekNum_2])))
+
+previous_week_revenue = CALCULATE(
+    sum(cc_detail[revenue]),
+    FILTER(
+        all(cc_detail),
+        cc_detail[weekNum_2] = MAX(cc_detail[weekNum_2])-1))
